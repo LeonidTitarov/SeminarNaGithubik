@@ -25,4 +25,4 @@ jobs:
         password: ${{ secrets.GMAIL_PASS }}
         subject: Daily BBC News Summary
         body: ${{ env.NEWS }}
-        to: your-email@gmail.com  # Replace with your Gmail address
+        to: leonidas.titarov@gmail.com
