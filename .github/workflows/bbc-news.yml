@@ -1,28 +1,30 @@
-name: BBC News to Gmail
+name: BBC News Mail
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # Runs every day at 8:00 UTC
+    - cron: "0 7 * * *"  # každý den v 7:00
   workflow_dispatch:
 
 jobs:
-  send-news:
+  news:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Fetch BBC News
-      run: |
-        # Fetch the latest news from BBC RSS feed
-        NEWS=$(curl -s "https://feeds.bbci.co.uk/news/rss.xml" | grep -o '<title>.*</title>' | head -10 | sed 's/<title>//g' | sed 's/<\/title>//g')
-        echo "NEWS<<EOF" >> $GITHUB_ENV
-        echo "$NEWS" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-    - name: Send Email
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        username: ${{ secrets.GMAIL_USER }}
-        password: ${{ secrets.GMAIL_PASS }}
-        subject: Daily BBC News Summary
-        body: ${{ env.NEWS }}
-        to: leonidas.titarov@gmail.com
+      - name: Fetch BBC news
+        run: |
+          NEWS=$(curl -s https://feeds.bbci.co.uk/news/rss.xml | grep "<title>" | head -n 5 | sed 's/<[^>]*>//g')
+          echo "NEWS<<EOF" >> $GITHUB_ENV
+          echo "$NEWS" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: BBC zprávy dne
+          body: ${{ env.NEWS }}
+          to: leonida.titarov@gmail.com
+          from: "GitHub Bot <leonidas.titarov@gmail.com>"
