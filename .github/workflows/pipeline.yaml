@@ -1,0 +1,16 @@
+name: weather report
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  weather:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Fetch weather
+      run: |
+        CITY="London"
+        WEATHER=$(curl -s "wttr.in/$CITY?format=3")
+        echo "Weather: $WEATHER"
