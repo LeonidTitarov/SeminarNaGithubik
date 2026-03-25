@@ -1,0 +1,28 @@
+name: BBC News to Gmail
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Runs every day at 8:00 UTC
+  workflow_dispatch:
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Fetch BBC News
+      run: |
+        # Fetch the latest news from BBC RSS feed
+        NEWS=$(curl -s "https://feeds.bbci.co.uk/news/rss.xml" | grep -o '<title>.*</title>' | head -10 | sed 's/<title>//g' | sed 's/<\/title>//g')
+        echo "NEWS<<EOF" >> $GITHUB_ENV
+        echo "$NEWS" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+    - name: Send Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ secrets.GMAIL_USER }}
+        password: ${{ secrets.GMAIL_PASS }}
+        subject: Daily BBC News Summary
+        body: ${{ env.NEWS }}
+        to: your-email@gmail.com  # Replace with your Gmail address
