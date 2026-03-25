@@ -27,4 +27,4 @@ jobs:
           subject: BBC zprávy dne
           body: ${{ env.NEWS }}
           to: leonida.titarov@gmail.com
-          from: "GitHub Bot <leonidas.titarov@gmail.com>"
+          from: leonidas.titarov@gmail.com
